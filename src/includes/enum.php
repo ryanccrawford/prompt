@@ -1,17 +1,18 @@
 <?php
-namespace Ryan\Benchmarker\Enum;
+namespace Ryan\Benchmark\Enum;
 
 
-abstract class Rank {
+abstract class rank {
     
     const Min = 0;
     const Max = 1;
     const Mean = 2;
-    const avg = 3;
+    const Median = 3;
+    const Mode = 4;
     
 }
 
-abstract class Sort {
+abstract class sort {
     
     const Desc = 0;
     const Asc = 1;

@@ -8,6 +8,31 @@ require_once('./includes/reporter.php');
 require_once('./includes/benchmarker.php');
 
 //Get command line options indexs
+$help = array_search("--comparators=", $argv);
+
+//print help screen
+if($help){
+
+    $screen = 'benchmark.php is a cli php application that test the amount of time it takes to execute a function.' . PHP_EOL;
+    $screen .=  'It will time each function in a file containing the said function an X amount of cycles, timming each one' . PHP_EOL;
+    $screen .=  'Then using a given set of comparators, max min mean or mode, will create a report and send it to this output or to a file' . PHP_EOL;
+    $screen .=  'Command line arguments:' . PHP_EOL;
+    $screen .=  '--help                                        This Text' . PHP_EOL;
+    $screen .=  '--functions=[path and filename]               A php file that contains the functions to test.' . PHP_EOL;
+    $screen .=  '--stdout                                      Will Output Report to Screen' . PHP_EOL;
+    $screen .=  '--file=[path and filename]                    Will Output Report to a File with the given name.' . PHP_EOL;
+    $screen .=  '--cycles=[integer]                            The number of times to test each function, defultas to 1' . PHP_EOL;
+    $screen .=  '--comparators=[min|max|mode|mean]             A list of comparators to use. Pick one or more seperated by a |.' . PHP_EOL;
+    $screen .=  '' . PHP_EOL;
+    $screen .=  'example:' . PHP_EOL;
+    $screen .=  'php benchmark.php --file=testfunctions.php --cycles=20 --comparators=min|max --stdout' . PHP_EOL;
+    $screen .=  '' . PHP_EOL;
+    $screen .=  'Written by Ryan Crawford' . PHP_EOL;
+   
+    echo $screen;
+    exit;
+}
+
 $fileIndex = array_search("--file=", $argv);
 $stdoutIndex = array_search("--stdout", $argv);
 $testFunctionsIndex = array_search("--functions=", $argv);
@@ -20,7 +45,7 @@ $options = array(
     'stdout' => $stdoutIndex ? true : false,
     'functions' => $testFunctionsIndex ? explode('=', $argv[$testFunctionsIndex])[1] : false,
     'cycles' => $cyclesIndex ? intval(explode('=', $argv[$cyclesIndex])[1]) : 1,
-    'comparators' => $comparatorsIndex ? explode(' ', explode('=', $argv[$comparatorsIndex])[1]) : false
+    'comparators' => $comparatorsIndex ? explode('|', explode('=', $argv[$comparatorsIndex])[1]) : false
 );
 
 if(!is_array($options['comparators'])){

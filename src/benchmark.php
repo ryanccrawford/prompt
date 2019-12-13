@@ -8,7 +8,7 @@ require_once('./includes/reporter.php');
 require_once('./includes/benchmarker.php');
 
 //Get command line options indexs
-$help = array_search("--comparators=", $argv);
+$help = array_search("--help", $argv);
 
 //print help screen
 if($help){

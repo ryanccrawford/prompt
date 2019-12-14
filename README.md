@@ -13,7 +13,7 @@ The benchmark should execute each function the specified number of cycles and co
  
 ## Comparator
 The comparator is some criteria on which the functions will be ranked in relation to execution time (min, max, avg, mean, etc...).
-### TODO: Optionally it can also specify a sort order (ascending, descending). 
+TODO: Optionally it can also specify a sort order (ascending, descending). 
  
 ## Reporter
 ### Paramaters:

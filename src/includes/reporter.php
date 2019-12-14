@@ -9,7 +9,8 @@ use Exception;
  * Reporter: Used to create a collection of reports 
  * from the results of benchmarker
  */
-class ReporterService {
+class ReporterService
+{
 
     protected $benchmarkResults;
     protected $format;
@@ -23,12 +24,12 @@ class ReporterService {
      * @param array $resultSet a collection of Result
      * @return void
      **/
-    public function setbenchmarkResults($resultSet) : void
+    public function setbenchmarkResults($resultSet): void
     {
-        if(!$resultSet){
+        if (!$resultSet) {
             throw new Exception('Must provied an array of benchmark results');
         }
-            $this->benchmarkResults = $resultSet;
+        $this->benchmarkResults = $resultSet;
     }
 
     /**
@@ -37,24 +38,24 @@ class ReporterService {
      * @param array $comparators a collection of Comparator
      * @return void
      **/
-    public function setComparators($comparators) : void
+    public function setComparators($comparators): void
     {
-        if(!$comparators){
+        if (!$comparators) {
             throw new Exception('Must provied an array of comparators');
         }
-            $this->comparators = $comparators;
+        $this->comparators = $comparators;
     }
 
-     /**
+    /**
      * setformat Setter 
      * Sets the internal $format and $filePath
      * @param string $format either 'stdout' Defualt or 'file'
      * @param string $filePath path to file used to log output of report
      * @return void
      **/
-    public function setformat($format = 'stdout', $filePath = '') : void
+    public function setformat($format = 'stdout', $filePath = ''): void
     {
-        $this->format = $format; 
+        $this->format = $format ? 'stdout' : 'file';
         $this->filePath = $filePath;
     }
 
@@ -63,18 +64,17 @@ class ReporterService {
      * Sends the formated report using the the values set on this classes properties
      * @return void
      **/
-    public function sendReportStream() : void
+    public function sendReportStream(): void
     {
         $report = new ReportType($this->createReportResponse());
-        switch($this->format){
+        switch ($this->format) {
             case 'file':
                 $this->toDisk($report);
-            break;
+                break;
             case 'stdout':
             default:
                 $this->stdOut($report);
         }
-
     }
 
     /**
@@ -98,98 +98,95 @@ class ReporterService {
     {
         $numberOfBytes = 0;
 
-        try{
+        try {
 
             $numberOfBytes = file_put_contents($this->filePath, $report->toString(), FILE_APPEND);
-        }catch(Exception $exception)
-        {
+        } catch (Exception $exception) {
             echo 'Exception occured while trying to write to the file ' . $this->filePath . PHP_EOL . "Exception: " . $exception->getMessage() . PHP_EOL;
             return;
         }
-        
-       
-       if($numberOfBytes === false){
 
-        echo 'Error writting file ' . $this->filePath . PHP_EOL . "Error: Unkonown" . PHP_EOL;
 
-       }else{
+        if ($numberOfBytes === false) {
 
-           echo 'File written to the file ' . $this->filePath . PHP_EOL . "Bytes written: " . $numberOfBytes . PHP_EOL;
-       }
+            echo 'Error writting file ' . $this->filePath . PHP_EOL . "Error: Unkonown" . PHP_EOL;
+        } else {
 
-       return;
+            echo 'File written to the file ' . $this->filePath . PHP_EOL . "Bytes written: " . $numberOfBytes . PHP_EOL;
+        }
 
+        return;
     }
 
-     /**
+    /**
      * createReportResponse method 
      * Creates a ReportResponse using properties $benchmarkResults and $comparators    
      * @return array
      **/
-    public function createReportResponse() : array
+    public function createReportResponse(): array
     {
         $decoded_results = [];
-      
-        foreach($this->comparators as $comparator){
+
+        //Loop through comparators and run rankings on the benchmarked cycle results
+        foreach ($this->comparators as $comparator) {
             foreach ($this->benchmarkResults as $functionName => $results) {
                 $result = $this->doAction($comparator, $results);
-                $decoded_results[$functionName] = [$result];
+                $decoded_results[$functionName][] = $result;
             }
         }
-        
+
         return $decoded_results;
     }
 
-     /**
+    /**
      * doAction method 
      * Creates a a result using the given rank type on a list of benchmark execution times.accordion
      * @param \Ryan\Benchmark\Enum\rank $action 
      * @param array $timeList array of times as floats
      * @return array 
      **/
-    public function doAction(\Ryan\Benchmark\Enum\rank $action, $timeList) : array
+    public function doAction(\Ryan\Benchmark\Comparator $action, $timeList): array
     {
-        
+
         $result = [];
+        //Using comparators determine rankings
         $numberOfCycles = count($timeList);
-       
-            switch ($action) {
+
+        switch ($action->ranking_type) {
 
             case \Ryan\Benchmark\Enum\rank::Max:
-                    $result['Maximum Time']  = max($timeList);
-            break;
+                $result['Maximum Time']  = max($timeList);
+                break;
             case \Ryan\Benchmark\Enum\rank::Min:
-                    $result['Minimun Time'] = min($timeList);
-            break;
+                $result['Minimun Time'] = min($timeList);
+                break;
             case \Ryan\Benchmark\Enum\rank::Mean:
-                    $result['Average Time'] = array_sum($timeList) / $numberOfCycles;
-            break;
+                $result['Average Time'] = array_sum($timeList) / $numberOfCycles;
+                break;
             case \Ryan\Benchmark\Enum\rank::Median:
-                    rsort($timeList);
-                    $middle = round($numberOfCycles, 2);
-                    $median = $result[$middle-1];
-                    $result['Median Time'] =  $median;
-            break;
+                rsort($timeList);
+                $middle = round($numberOfCycles, 2);
+                $median = $result[$middle - 1];
+                $result['Median Time'] =  $median;
+                break;
             case \Ryan\Benchmark\Enum\rank::Mode:
-                    $countedValues = array_count_values($timeList);
-                    asort($countedValues);
-                    foreach ($countedValues as $k => $v) {
-                        $result['Mode Time'] = $k;
-                        break;
-                    }
-                    if(!$result['Mode Time']){
-                        throw new Exception("Mode couldn't calculate");
-                    }
-            break;
+                $countedValues = array_count_values($timeList);
+                asort($countedValues);
+                foreach ($countedValues as $k => $v) {
+                    $result['Mode Time'] = $k;
+                    break;
+                }
+                if (!$result['Mode Time']) {
+                    throw new Exception("Mode couldn't calculate");
+                }
+                break;
             default:
                 throw new Exception("Not a valid comparator");
         }
-        
+
 
         return $result;
-
     }
-
 }
 
 
@@ -198,11 +195,12 @@ class ReporterService {
  * Used to convert reportServiceResponse to a formated string 
  * for output to screen or txt file
  */
-class ReportType {
+class ReportType
+{
 
     protected $reportServiceResponse;
-  
-     /**
+
+    /**
      * Report Constructor 
      *
      * Creates an instance of a ReportType
@@ -213,7 +211,6 @@ class ReportType {
     public function __construct(array $reportServiceResponse)
     {
         $this->reportServiceResponse = $reportServiceResponse;
-        
     }
 
     /**
@@ -224,17 +221,32 @@ class ReportType {
      * @param array $reportServiceResponse An array of Key Value pairs created by a ReporterService.
      * @return string 
      **/
-    public function toString() : string
+    public function toString(): string
     {
-       $stringToReturn = '--- Benchmark Report ---' . PHP_EOL;
-       $stringToReturn = '========================' . PHP_EOL;
-       foreach($this->reportServiceResponse as $key => $value){
-           $stringToReturn .= $key . ": " . $value . PHP_EOL;
-       }
-       $stringToReturn = '========================' . PHP_EOL;
+        //used to get the length of characters in one line of the report
+        $toAddLength = 0;
 
-       return $stringToReturn;
-       
+        //The formatted report String to return
+        $stringToReturn = '--- Benchmark Report ---' . PHP_EOL;
+        $stringToReturn .= '========================' . PHP_EOL;
+
+        //Create the report
+        foreach ($this->reportServiceResponse as $key => $value) {
+            $stringToReturn .= 'Function: ' . $key . PHP_EOL;
+            if (is_array($value)) {
+                foreach ($value as $ranking) {
+                    foreach ($ranking as $rankType => $v) {
+                        $toAdd = '';
+                        $toAdd .= 'Type: ' . $rankType . ' - ' . $v['time'] . 'ms. ' . PHP_EOL;
+                        $toAddLength = strlen($toAdd);
+                        $stringToReturn .= $toAdd;
+                        $stringToReturn .= str_repeat('-', $toAddLength) . PHP_EOL;
+                    }
+                }
+            };
+        }
+        $stringToReturn .= str_repeat('=', $toAddLength) . PHP_EOL;
+
+        return $stringToReturn;
     }
-
 }

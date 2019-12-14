@@ -27,7 +27,7 @@ It should generate a report which ranks the functions by the given comparators. 
 To get things runing, first clone the project 
 
 ```bash
-$ git clone
+$ git clone https://github.com/ryanccrawford/prompt
 ```
 
 Next cd into folder and run composer. Then cd into the src folder.

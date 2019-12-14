@@ -1,4 +1,12 @@
 <?php
+/*
+ * Title: Benchmarker
+ * Version: 1.0.0 - RTC
+ * CLI Application
+ * Created: 12-13-2019 
+ * Author: Ryan Crawford
+ * Email: ryanccrawford@live.com
+*/
 
 namespace Ryan\Benchmark;
 

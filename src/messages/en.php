@@ -1,6 +1,15 @@
 <?php
+/*
+ * Title: Benchmarker
+ * Version: 1.0.0 - RTC
+ * CLI Application
+ * Created: 12-13-2019 
+ * Author: Ryan Crawford
+ * Email: ryanccrawford@live.com
+*/
 
-//Error Messages
+
+//Messages
 $help_messgae = 'benchmark.php is a cli php application that test the amount of time it takes to execute a function.' . PHP_EOL;
 $help_messgae .=  'It will time each function in a file containing the said function an X amount of cycles, timming each one' . PHP_EOL;
 $help_messgae .=  'Then using a given set of comparators, max min mean or mode, will create a report and send it to this output or to a file' . PHP_EOL;

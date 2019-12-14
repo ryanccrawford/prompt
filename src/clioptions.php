@@ -1,9 +1,17 @@
 <?php
+/*
+ * Title: Benchmarker
+ * Version: 1.0.0 - RTC
+ * CLI Application
+ * Created: 12-13-2019 
+ * Author: Ryan Crawford
+ * Email: ryanccrawford@live.com
+*/
 
 //Load Messages
 include_once('./messages/' . $lang . '.php');
 //Get command line options indexs
-$help = array_search("--help", $argv);
+$help = $argv[1] === '--help';
 
 //print help screen
 if ($help) {

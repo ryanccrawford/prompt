@@ -46,7 +46,6 @@ class Benchmarker
                 $results[$function][] = ['time' => $this->callFunction($function)];
             }
         }
-        echo var_dump($results);
         return $results;
     }
 

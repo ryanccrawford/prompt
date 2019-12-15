@@ -223,21 +223,22 @@ class ReportType
 
         //Create the report
         foreach ($this->reportServiceResponse as $key => $value) {
-            $stringToReturn .= 'Function: ' . $key . PHP_EOL;
+            $stringToReturn .= 'Callable Name: ' . $key . PHP_EOL;
             if (is_array($value)) {
-                foreach ($value as $ranking) {
-                    foreach ($ranking as $rankType => $v) {
+                $bottomBorderLength = 0;
+                foreach ($value as $comparators) {
+
+                    foreach ($comparators as $comparatorName => $v) {
                         $toAdd = '';
-                        $toAdd .= 'Type: ' . $rankType . ' - ' . $v['time'] . 'ms. ' . PHP_EOL;
-                        $toAddLength = strlen($toAdd);
+                        $toAdd .= '   Comparator ' . $comparatorName . ' = ' . $v['time'] . ' ms. ' . PHP_EOL;
+                        $bottomBorderLength = $bottomBorderLength > strlen($toAdd) ? $bottomBorderLength : strlen($toAdd);
                         $stringToReturn .= $toAdd;
-                        $stringToReturn .= str_repeat('-', $toAddLength) . PHP_EOL;
                     }
                 }
-            };
+                $stringToReturn .= str_repeat('-', $bottomBorderLength) . PHP_EOL;
+            }
         }
         $stringToReturn .= str_repeat('=', $toAddLength) . PHP_EOL;
-
         return $stringToReturn;
     }
 }

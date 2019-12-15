@@ -41,6 +41,8 @@ you can create a file that has the functions you wanted to benchmark or create a
 $ php benchmark.php --functions=testfunctionsfile.php --cycles=20 --comparators=min,max --stdout
 
 ```
+Included comparators: Min, Max, Median, Mean
+
 For help and a list of arguments you can pass
 ```bash
 $ php benchmark.php --help

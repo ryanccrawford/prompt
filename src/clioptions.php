@@ -61,28 +61,9 @@ if (!isset($options['comparators'])) {
     exit;
 }
 
-//Extract comparators from options and create an array of enum comparator->rank types
-$comparators = [];
-foreach ($options['comparators'] as $comparator) {
-    $c = new \Ryan\Benchmark\Comparator();
-    $type = 0;
-    switch ($comparator) {
-        case 'max':
-            $type = \Ryan\Benchmark\Enum\rank::Max;
-            break;
-        case 'min':
-            $type = \Ryan\Benchmark\Enum\rank::Min;
-            break;
-        case 'mean':
-            $type = \Ryan\Benchmark\Enum\rank::Mean;
-            break;
-        case 'mode':
-            $type = \Ryan\Benchmark\Enum\rank::Mode;
-            break;
-    }
-    $c->ranking_type = $type;
-    $comparators[] = $c;
-}
+//Set Comparator names
+$comparators = $options['comparators'];
+
 
 //check to see if a php functions file was given
 if (!$options['functions']) {

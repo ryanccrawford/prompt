@@ -26,12 +26,11 @@ class Benchmarker
      *
      * Creates an instance of the Benchmarker Class
      *
-     * @param array $functions An array of callable functions.
-     * @param int $cycles Number of times to benchmark each function.
+     * @param array $functions An array of callables.
+     * @param int $cycles Optional. Number of times to run a benchmark on each callable.
      **/
-    public function __construct(array $functions, int $cycles)
+    public function __construct(array $functions, int $cycles = 1)
     {
-
         $this->functions = $functions;
         $this->cycles = $cycles;
     }
@@ -44,7 +43,7 @@ class Benchmarker
             $cycleCounter = 0;
             while ($cycleCounter < $this->cycles) {
                 $cycleCounter++;
-                $results['' . $function . ''][] = ['time' => $this->callFunction($function)];
+                $results[$function][] = ['time' => $this->callFunction($function)];
             }
         }
         echo var_dump($results);
@@ -56,12 +55,15 @@ class Benchmarker
         $startTime = null;
         $endTime = null;
         try {
-            $startTime = \microtime(true);
+            $startTime = doubleval(microtime(true));
             $fn();
-            $endTime = \microtime(true);
+            $endTime = doubleval(microtime(true));
         } catch (Exception $ec) {
             throw $ec;
+            exit;
         }
-        return ($endTime - $startTime);
+        $totalTime = doubleval(($endTime * 1000) - ($startTime * 1000)); //Milliseconds Sec
+
+        return  $totalTime;
     }
 }

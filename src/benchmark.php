@@ -13,8 +13,7 @@ $lang = 'en';
 
 //load includes
 require_once('../vendor/autoload.php');
-require_once('./includes/enum.php');
-require_once('./includes/comparator.php');
+require_once('./includes/comparators/base/comparator.php');
 require_once('./includes/reporter.php');
 require_once('./includes/benchmarker.php');
 require_once('./clioptions.php');
@@ -31,9 +30,9 @@ $reporter = new \Ryan\Benchmark\ReporterService();
 $benchmarkResults = $benchMarker->getResults();
 
 //To Spec: Create Reporter that will take benchmark results
-$reporter->setbenchmarkResults($benchmarkResults);
+$reporter->setBenchmarkResults($benchmarkResults);
 $reporter->setComparators($comparators);
-$reporter->setformat($options['stdout'], $options['file']);
+$reporter->setFormat($options['stdout'], $options['file']);
 
 //To Spec: Creates human readable report on I/O Steam to disk or stdout
 $reporter->sendReportStream();

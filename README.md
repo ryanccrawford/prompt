@@ -1,4 +1,5 @@
-# Benchmarker PHP CLI Application
+
+# PROMPT - BENCHMARKER PHP CLI APPLICATION
 
 Benchmark Project The objective of the project is to create an application which can benchmark the performance of a set of                   PHP functions and generate a report comparing the performance. 
  

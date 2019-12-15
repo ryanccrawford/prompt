@@ -10,7 +10,6 @@
 
 namespace Ryan\Benchmark;
 
-use Ryan\Benchmark\Enum\rank;
 use Exception;
 
 /**
@@ -32,7 +31,7 @@ class ReporterService
      * @param array $resultSet a collection of Result
      * @return void
      **/
-    public function setbenchmarkResults($resultSet): void
+    public function setBenchmarkResults($resultSet): void
     {
         if (!$resultSet) {
             throw new Exception('Must provied an array of benchmark results');
@@ -61,7 +60,7 @@ class ReporterService
      * @param string $filePath path to file used to log output of report
      * @return void
      **/
-    public function setformat($format = 'stdout', $filePath = ''): void
+    public function setFormat($format = 'stdout', $filePath = ''): void
     {
         $this->format = $format ? 'stdout' : 'file';
         $this->filePath = $filePath;
@@ -138,7 +137,7 @@ class ReporterService
         //Loop through comparators and run rankings on the benchmarked cycle results
         foreach ($this->comparators as $comparator) {
             foreach ($this->benchmarkResults as $functionName => $results) {
-                $result = $this->doAction($comparator, $results);
+                $result = $this->runComparator($comparator, $results);
                 $decoded_results[$functionName][] = $result;
             }
         }
@@ -153,45 +152,29 @@ class ReporterService
      * @param array $timeList array of times as floats
      * @return array 
      **/
-    public function doAction(\Ryan\Benchmark\Comparator $action, $timeList): array
+    public function runComparator(string $comparator, array $timeList): array
     {
 
         $result = [];
         //Using comparators determine rankings
-        $numberOfCycles = count($timeList);
 
-        switch ($action->ranking_type) {
 
-            case \Ryan\Benchmark\Enum\rank::Max:
-                $result['Maximum Time']  = max($timeList);
-                break;
-            case \Ryan\Benchmark\Enum\rank::Min:
-                $result['Minimun Time'] = min($timeList);
-                break;
-            case \Ryan\Benchmark\Enum\rank::Mean:
-                $result['Average Time'] = array_sum($timeList) / $numberOfCycles;
-                break;
-            case \Ryan\Benchmark\Enum\rank::Median:
-                rsort($timeList);
-                $middle = round($numberOfCycles, 2);
-                $median = $result[$middle - 1];
-                $result['Median Time'] =  $median;
-                break;
-            case \Ryan\Benchmark\Enum\rank::Mode:
-                $countedValues = array_count_values($timeList);
-                asort($countedValues);
-                foreach ($countedValues as $k => $v) {
-                    $result['Mode Time'] = $k;
-                    break;
-                }
-                if (!$result['Mode Time']) {
-                    throw new Exception("Mode couldn't calculate");
-                }
-                break;
-            default:
-                throw new Exception("Not a valid comparator");
+        $fileToInclude = "./includes/comparators/comparator" . strtolower($comparator) . ".php";
+        if (!file_exists($fileToInclude)) {
+            throw new Exception('File: ' . $fileToInclude . ' does not exists');
+            exit;
+        }
+        $comparatorNameSpace = 'Ryan\\Benchmark\\Comparators\\';
+        $comparatorClass = $comparatorNameSpace . 'Comparator' . ucfirst(strtolower($comparator));
+        include_once($fileToInclude);
+        if (!class_exists($comparatorClass)) {
+            throw new Exception('File: ' . $fileToInclude . ' does not contain a comparator implementation');
+            exit;
         }
 
+        $comparatorObject = new $comparatorClass();
+
+        $result[strtoupper($comparator)] = $comparatorObject->calculate($timeList);
 
         return $result;
     }
@@ -240,21 +223,22 @@ class ReportType
 
         //Create the report
         foreach ($this->reportServiceResponse as $key => $value) {
-            $stringToReturn .= 'Function: ' . $key . PHP_EOL;
+            $stringToReturn .= 'Callable Name: ' . $key . PHP_EOL;
             if (is_array($value)) {
-                foreach ($value as $ranking) {
-                    foreach ($ranking as $rankType => $v) {
+                $bottomBorderLength = 0;
+                foreach ($value as $comparators) {
+
+                    foreach ($comparators as $comparatorName => $v) {
                         $toAdd = '';
-                        $toAdd .= 'Type: ' . $rankType . ' - ' . $v['time'] . 'ms. ' . PHP_EOL;
-                        $toAddLength = strlen($toAdd);
+                        $toAdd .= '   Comparator ' . $comparatorName . ' = ' . $v['time'] . ' ms. ' . PHP_EOL;
+                        $bottomBorderLength = $bottomBorderLength > strlen($toAdd) ? $bottomBorderLength : strlen($toAdd);
                         $stringToReturn .= $toAdd;
-                        $stringToReturn .= str_repeat('-', $toAddLength) . PHP_EOL;
                     }
                 }
-            };
+                $stringToReturn .= str_repeat('-', $bottomBorderLength) . PHP_EOL;
+            }
         }
         $stringToReturn .= str_repeat('=', $toAddLength) . PHP_EOL;
-
         return $stringToReturn;
     }
 }

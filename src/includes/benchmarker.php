@@ -11,7 +11,6 @@
 namespace Ryan\Benchmark;
 
 use Exception;
-use Ryan\Benchmark\Enum;
 
 class Benchmarker
 {
@@ -35,6 +34,12 @@ class Benchmarker
         $this->cycles = $cycles;
     }
 
+    /**
+     * getResults() method 
+     *
+     * Generates benchmarks and Returns the result set as an array
+     * @return array 
+     **/
     public function getResults(): array
     {
         $results = [];
@@ -49,7 +54,7 @@ class Benchmarker
         return $results;
     }
 
-    public function callFunction(callable $fn): float
+    protected function callFunction(callable $fn): float
     {
         $startTime = null;
         $endTime = null;

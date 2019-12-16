@@ -7,11 +7,16 @@
  * Author: Ryan Crawford
  * Email: ryanccrawford@live.com
 */
+$numberOfArguments = count($argv);
+$help = false;
 
 //Load Messages
 include_once('./messages/' . $lang . '.php');
-//Get command line options indexs
-$help = $argv[1] === '--help';
+if ($numberOfArguments < 2) {
+    $help = true;
+} else {
+    $help = $argv[1] === '--help' ? true : false;
+}
 
 //print help screen
 if ($help) {
@@ -19,7 +24,7 @@ if ($help) {
     exit;
 }
 
-$numberOfArguments = count($argv);
+
 
 $fileIndex = null;
 $stdoutIndex  = null;

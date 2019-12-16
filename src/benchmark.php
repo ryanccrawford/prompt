@@ -16,6 +16,7 @@ require_once('../vendor/autoload.php');
 require_once('./includes/comparators/base/comparator.php');
 require_once('./includes/reporter.php');
 require_once('./includes/benchmarker.php');
+require_once('./messages/' . $lang . '.php');
 require_once('./clioptions.php');
 
 

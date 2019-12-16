@@ -10,8 +10,7 @@
 $numberOfArguments = count($argv);
 $help = false;
 
-//Load Messages
-include_once('./messages/' . $lang . '.php');
+
 if ($numberOfArguments < 2) {
     $help = true;
 } else {

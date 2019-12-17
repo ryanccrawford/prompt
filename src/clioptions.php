@@ -36,18 +36,23 @@ for ($i = 0; $i < $numberOfArguments; $i++) {
 
     if (stristr($argv[$i], '--file=') !== false) {
         $fileIndex = $i;
+        continue;
     }
     if (stristr($argv[$i], '--stdout') !== false) {
         $stdoutIndex = $i;
+        continue;
     }
     if (stristr($argv[$i], '--functions=') !== false) {
         $testFunctionsIndex = $i;
+        continue;
     }
     if (stristr($argv[$i], '--cycles=') !== false) {
         $cyclesIndex = $i;
+        continue;
     }
     if (stristr($argv[$i], '--comparators=') !== false) {
         $comparatorsIndex = $i;
+        continue;
     }
 }
 

@@ -39,7 +39,7 @@ $ cd src
 
 you can create a file that has the functions you wanted to benchmark or create a list of callable names either way you run the cli appication like so.
 ```bash
-$ php benchmark.php --functions=testfunctionsfile.php --cycles=20 --comparators=min,max --stdout
+$ php benchmark.php --functions=testfunctionsfile.php --cycles=20 --comparators=min,max,median,mean --stdout
 
 ```
 Included comparators: Min, Max, Median, Mean
